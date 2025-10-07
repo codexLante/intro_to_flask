@@ -75,7 +75,26 @@ def login_member():
         return jsonify({"error":"Invalid email or password"}),401
     
     access_token=create_access_token(
-        identity={"id":member.id,"name":member.name}
+         identity=f"{member.id}"       
     )
     
     return jsonify ({"token":access_token})
+
+@member_bp.route("/search/<name>", methods=["GET"])
+def search_member(name):
+    members= Member.query.filter(Member.name.ilike(f"%{name}%")).all()
+    # members = Member.query.filter_by(name=name).all()
+    member_list = []
+
+    for member in members:
+        member_list.append({
+            "id": member.id,
+            "name": member.name,
+            "email": member.email,
+        })
+
+    print(member_list)
+    return jsonify({
+        "members": member_list,
+        "count": len(member_list)
+    }), 200

@@ -3,6 +3,7 @@ from app.models import Student
 from app.db import db
 import re
 import os
+from flask_jwt_extended import jwt_required
 
 
 #create student bluprint
@@ -157,6 +158,7 @@ def serve_file(filename):
     return send_from_directory(uploads,filename)
 
 @student_bp.route("/edit/<int:student_id>",methods=["PUT"])
+@jwt_required()
 def edit_student(student_id):
 
 
@@ -185,6 +187,7 @@ def edit_student(student_id):
     }),200
 
 @student_bp.route("/list",methods=["GET"])
+@jwt_required()
 def list_users():
     students=Student.query.all()
     print("List Students")
@@ -220,7 +223,6 @@ def delete_users(student_id):
         return jsonify({"message":f"The student with id {student_id} is successfully deleted"})
     else:
         return {"error": f"Student with id {student_id}not found"}, 400        
-
 
 
 
